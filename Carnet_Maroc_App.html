@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Maroc 🇲🇦">
+<meta name="theme-color" content="#c0392b">
+<title>Maroc 🇲🇦</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+:root {
+  --red: #c0392b;
+  --red-dark: #8b1a10;
+  --gold: #f0b429;
+  --bg: #f7f3ee;
+  --card: #ffffff;
+  --text: #1a1208;
+  --muted: #8a7a65;
+  --border: #e5ddd2;
+}
+
+body {
+  font-family: -apple-system, 'SF Pro Text', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  max-width: 430px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+/* ─── HEADER ─── */
+.app-header {
+  background: linear-gradient(160deg, var(--red) 0%, var(--red-dark) 100%);
+  padding: 56px 20px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.header-flag { font-size: 32px; line-height:1; }
+
+.header-title {
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-top: 2px;
+}
+
+.header-sub {
+  color: rgba(255,255,255,0.65);
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.edit-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: background 0.2s;
+}
+.edit-btn:active { background: rgba(255,255,255,0.25); }
+.edit-btn.active { background: var(--gold); color: var(--red-dark); }
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 14px 20px 0;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display:none; }
+
+.tab {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: rgba(255,255,255,0.75);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.tab.active {
+  background: white;
+  color: var(--red-dark);
+}
+
+/* ─── CONTENT ─── */
+.content { padding: 16px 16px 0; }
+
+/* ─── DAY CARD ─── */
+.day-section { display: none; }
+.day-section.active { display: block; }
+
+.day-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 16px 0 10px 4px;
+}
+
+/* ─── STEP CARD ─── */
+.step {
+  background: var(--card);
+  border-radius: 16px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.step-main {
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.step-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--red);
+  background: #fdf0ee;
+  padding: 3px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+  letter-spacing: 0.3px;
+}
+
+.step-content { flex: 1; min-width: 0; }
+
+.step-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.step-transport {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.step-chevron {
+  color: var(--border);
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: transform 0.25s;
+  margin-top: 2px;
+}
+.step.open .step-chevron { transform: rotate(90deg); color: var(--red); }
+
+/* ─── DETAILS ─── */
+.step-details {
+  display: none;
+  padding: 0 16px 14px;
+  border-top: 1px solid var(--border);
+}
+.step.open .step-details { display: block; }
+
+.detail-text {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: #3a2e1e;
+  padding-top: 12px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: 500;
+  width: 100%;
+}
+.badge-gold { background: #fff8e1; color: #7a5800; border-left: 3px solid var(--gold); }
+.badge-green { background: #e8f5e9; color: #2a5c2a; border-left: 3px solid #4caf50; }
+.badge-orange { background: #fff3e0; color: #6a3c00; border-left: 3px solid #ff9800; }
+
+/* ─── EDIT MODE ─── */
+.edit-field {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  resize: none;
+  border-bottom: 2px solid var(--red);
+  padding: 4px 0;
+  color: var(--text);
+  min-height: 60px;
+}
+
+/* ─── TIPS CARD ─── */
+.tips-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.tip-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.tip-icon { font-size: 22px; margin-bottom: 6px; }
+.tip-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+.tip-text { font-size: 12.5px; line-height: 1.5; color: var(--text); }
+
+/* ─── BOTTOM NAV ─── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: 430px;
+  background: rgba(247,243,238,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px 0 20px;
+  z-index: 200;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px 0;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.nav-btn.active { color: var(--red); }
+.nav-btn span:first-child { font-size: 22px; }
+
+/* ─── SAVE TOAST ─── */
+.toast {
+  position: fixed;
+  bottom: 90px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  z-index: 300;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="header-top">
+    <div>
+      <div class="header-flag">🇲🇦</div>
+      <div class="header-title">Maroc</div>
+      <div class="header-sub">26 juil – 02 août · Tanger</div>
+    </div>
+    <button class="edit-btn" onclick="toggleEdit()" id="editBtn">✏️ Modifier</button>
+  </div>
+  <div class="tabs" id="dayTabs"></div>
+</div>
+
+<!-- CONTENT -->
+<div class="content" id="mainContent"></div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="switchNav('jours', this)">
+    <span>📅</span><span>Jours</span>
+  </button>
+  <button class="nav-btn" onclick="switchNav('pratique', this)">
+    <span>💡</span><span>Pratique</span>
+  </button>
+  <button class="nav-btn" onclick="switchNav('notes', this)">
+    <span>📝</span><span>Notes</span>
+  </button>
+</div>
+
+<div class="toast" id="toast">✓ Sauvegardé</div>
+
+<script>
+// ─── DATA ───
+const defaultData = {
+  jours: [
+    {
+      id: "j27",
+      tab: "27/07",
+      label: "Médina & Histoire",
+      etapes: [
+        {
+          time: "10h–11h30",
+          title: "Kasbah & Musée Dar el-Makhzen",
+          transport: "🚕 Petit taxi → Bab Haha (~10 min)",
+          desc: "Ancien palais du sultan (1691), construit après l'expulsion des Anglais. À voir : patio aux zelliges, plafonds en cèdre sculpté, coffre-fort royal à boutons multiples, et la mosaïque \"Navigation de Vénus\" venue de Volubilis, posée au sol. Jardin andalou caché. Billet inclut l'espace d'art contemporain à côté.",
+          badges: [
+            { type: "green", text: "💡 Commence par le haut — descente toute la journée" },
+            { type: "orange", text: "⚠️ Fermé le mardi · ~30 dh" }
+          ]
+        },
+        {
+          time: "11h30–12h",
+          title: "Bab Al Bahr",
+          transport: "🚶 2 min à pied depuis le musée",
+          desc: "La porte face à la mer — vue sur le détroit de Gibraltar, point de rencontre entre l'Atlantique et la Méditerranée.",
+          badges: []
+        },
+        {
+          time: "12h–14h",
+          title: "Descente Médina & Petit Socco",
+          transport: "🚶 À pied uniquement (ruelles piétonnes)",
+          desc: "Le Petit Socco est l'ancienne place de commerce, entourée de cafés figés dans le temps. Déjeuner sur place.",
+          badges: []
+        },
+        {
+          time: "15h–18h",
+          title: "Grand Socco & Légation Américaine",
+          transport: "🚶 ~10-15 min à pied depuis le Petit Socco",
+          desc: "Premier bâtiment diplomatique US hors des États-Unis, offert par le sultan en 1821 (le Maroc fut le 1er pays à reconnaître l'indépendance US en 1777). 40 pièces, mobilier XIXe, et une salle dédiée à Paul Bowles (auteur de Un thé au Sahara, mort à Tanger en 1999). Deux bâtiments reliés par une passerelle : l'un européen, l'autre marocain avec moucharabiehs.",
+          badges: [
+            { type: "orange", text: "⚠️ ~50 dh · Fermé jours fériés marocains" }
+          ]
+        },
+        {
+          time: "Retour",
+          title: "Hôtel",
+          transport: "🚕 Petit taxi depuis le Grand Socco (~7-10 min)",
+          desc: "",
+          badges: []
+        }
+      ]
+    },
+    {
+      id: "j28",
+      tab: "28/07",
+      label: "Cap Spartel",
+      etapes: [
+        {
+          time: "⚠️ Info",
+          title: "Grand taxi blanc obligatoire",
+          transport: "",
+          desc: "Circuit en ligne droite de 20 km à l'ouest. Réserver un grand taxi à la demi-journée. Négocier le prix avant le départ.",
+          badges: []
+        },
+        {
+          time: "10h–11h",
+          title: "Parc Perdicaris",
+          transport: "🚕 Grand taxi ~15-20 min",
+          desc: "",
+          badges: []
+        },
+        {
+          time: "11h–13h",
+          title: "Cap Spartel (Phare)",
+          transport: "🚕 ~5 min",
+          desc: "Point de rencontre entre l'Atlantique et la Méditerranée. Le phare abrite un petit musée des phares. Vue spectaculaire sur les deux mers.",
+          badges: []
+        },
+        {
+          time: "13h–14h",
+          title: "Grottes d'Hercule",
+          transport: "🚕 ~10 min",
+          desc: "Grottes naturelles en bord de mer. L'ouverture vers l'océan a la forme du continent africain vue de l'intérieur.",
+          badges: [
+            { type: "gold", text: "⭐ Viens à marée basse si possible" }
+          ]
+        },
+        {
+          time: "14h–18h30",
+          title: "Déjeuner poisson & Plage d'Achakar",
+          transport: "🚕 Collé aux grottes",
+          desc: "",
+          badges: []
+        }
+      ]
+    },
+    {
+      id: "j29",
+      tab: "29/07",
+      label: "Asilah",
+      etapes: [
+        {
+          time: "09h",
+          title: "Départ → Asilah",
+          transport: "🚶 Hôtel → Gare : 12-15 min à pied (av. de l'Espagne) · 🚂 Train ~45 min",
+          desc: "",
+          badges: []
+        },
+        {
+          time: "10h–18h",
+          title: "Médina d'Asilah",
+          transport: "🚕 Gare → Médina ~5 min · Puis 100% à pied",
+          desc: "Remparts portugais du XVe siècle avec panoramas sur l'Atlantique. Le point de vue de Caraquia (extrémité ouest des remparts) est le seul endroit où tu vois à la fois les fortifications et l'océan. Le Palais Raissuni donne directement sur la mer. Street art partout dans les ruelles, renouvelé chaque année.",
+          badges: [
+            { type: "gold", text: "⭐ Perds-toi dans les ruelles — les plus beaux murs sont cachés" }
+          ]
+        },
+        {
+          time: "18h",
+          title: "Retour gare",
+          transport: "🚕 Petit taxi depuis la médina (~5 min)",
+          desc: "",
+          badges: []
+        }
+      ]
+    },
+    {
+      id: "j30",
+      tab: "30/07",
+      label: "Chill",
+      etapes: [
+        {
+          time: "10h30–13h",
+          title: "Marina Bay",
+          transport: "🚶 À pied ~5-7 min depuis l'hôtel",
+          desc: "",
+          badges: []
+        },
+        {
+          time: "13h–17h",
+          title: "Grand Socco / Cinéma Rif",
+          transport: "🚕 Petit taxi (~5 min) pour éviter la montée au soleil",
+          desc: "Le Cinéma Rif (1938) est une institution art déco restaurée. Le Grand Socco est l'ancienne place de marché extérieure à la médina.",
+          badges: []
+        },
+        {
+          time: "Coucher de soleil",
+          title: "Café Hafa",
+          transport: "🚕 Vers Marshan (~8-10 min)",
+          desc: "Café mythique fondé en 1921, terrasses étagées face au détroit. Les Rolling Stones et les Beatles y sont passés. Thé à la menthe avec l'Espagne en face.",
+          badges: [
+            { type: "gold", text: "⭐ Arrive 30 min avant le coucher du soleil" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "j31",
+      tab: "31/07",
+      label: "Rabat TGV",
+      etapes: [
+        {
+          time: "08h",
+          title: "TGV Al Boraq → Rabat",
+          transport: "🚂 Tanger → Rabat",
+          desc: "",
+          badges: []
+        },
+        {
+          time: "10h15–12h",
+          title: "Tour Hassan & Mausolée Mohammed V",
+          transport: "🚕 ~5 min depuis la gare · Entrée gratuite",
+          desc: "Tour Hassan : minaret almohade inachevé (XIIe s.), 44 m — devait être la plus grande mosquée du monde, abandonné à la mort du sultan en 1199. Devant elle : ~200 colonnes tronquées, vestiges de la salle de prière.\n\nMausolée en face : construit là où Mohammed V a dirigé la 1ère prière après l'indépendance (1955). Marbre blanc de Carrare, tuiles vertes, zelliges et cèdre sculpté. Sarcophages visibles depuis une galerie en surplomb.",
+          badges: [
+            { type: "orange", text: "⚠️ Photos interdites à l'intérieur · Tenue correcte" }
+          ]
+        },
+        {
+          time: "12h–14h",
+          title: "Médina de Rabat & Déjeuner",
+          transport: "🚶 ~15 min à pied depuis la Tour Hassan",
+          desc: "",
+          badges: []
+        },
+        {
+          time: "14h–16h",
+          title: "Kasbah des Oudayas & Jardin Andalou",
+          transport: "🚶 ~10 min à pied depuis la médina · Gratuit",
+          desc: "Forteresse XIIe s. classée UNESCO, ruelles bleu et blanc, porte Bab Oudaïa (1195). Jardin Andalou avec orangers, citronniers, bougainvilliers, fontaines. Café Maure avec vue sur l'Atlantique et Salé en face.",
+          badges: [
+            { type: "orange", text: "⚠️ Jardin fermé le mardi" },
+            { type: "green", text: "💡 Parfait pour une pause thé avant le TGV retour" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "j01",
+      tab: "01/08",
+      label: "Dernier jour",
+      etapes: [
+        {
+          time: "Matin",
+          title: "Rue des Siaghines — Souvenirs",
+          transport: "🚕 Taxi depuis l'hôtel",
+          desc: "Rue des bijoutiers et artisans : poteries, tapis, cuir, souvenirs.",
+          badges: [
+            { type: "green", text: "💡 Négocie toujours — commence à 40-50% du prix affiché" }
+          ]
+        }
+      ]
+    }
+  ],
+  pratique: [
+    { icon: "🚕", label: "Taxis", text: "Petit taxi bleu = ville (compteur obligatoire). Grand taxi blanc = excursions (prix à négocier avant)." },
+    { icon: "📅", label: "Fermetures", text: "Kasbah Tanger + Oudayas Rabat : fermés le mardi. Légation : fermée jours fériés." },
+    { icon: "👗", label: "Tenue", text: "Épaules + genoux couverts pour le Mausolée Mohammed V et la Légation américaine." },
+    { icon: "💵", label: "Argent", text: "Cash en dirhams indispensable — peu d'endroits acceptent les cartes dans la médina." },
+    { icon: "📸", label: "Photos", text: "Interdites à l'intérieur du Mausolée Mohammed V." },
+    { icon: "🛍️", label: "Négociation", text: "Commence toujours à 40-50% du prix annoncé. C'est attendu, pas impoli." },
+  ],
+  notes: "Mes notes perso :\n\n"
+};
+
+// ─── STATE ───
+let data = JSON.parse(localStorage.getItem('maroc_data') || 'null') || JSON.parse(JSON.stringify(defaultData));
+let editMode = false;
+let currentNav = 'jours';
+let currentDay = data.jours[0].id;
+
+// ─── RENDER ───
+function render() {
+  if (currentNav === 'jours') renderJours();
+  else if (currentNav === 'pratique') renderPratique();
+  else renderNotes();
+}
+
+function renderJours() {
+  // Tabs
+  const tabsEl = document.getElementById('dayTabs');
+  tabsEl.innerHTML = data.jours.map(j => `
+    <button class="tab ${j.id === currentDay ? 'active' : ''}" onclick="switchDay('${j.id}')">${j.tab}</button>
+  `).join('');
+
+  // Content
+  const content = document.getElementById('mainContent');
+  const jour = data.jours.find(j => j.id === currentDay);
+  
+  content.innerHTML = `
+    <div class="day-label">${jour.label}</div>
+    ${jour.etapes.map((e, ei) => `
+      <div class="step" id="step-${ei}" onclick="toggleStep(${ei})">
+        <div class="step-main">
+          <span class="step-time">${e.time}</span>
+          <div class="step-content">
+            <div class="step-title">${e.title}</div>
+            ${e.transport ? `<div class="step-transport">${e.transport}</div>` : ''}
+          </div>
+          <span class="step-chevron">›</span>
+        </div>
+        ${e.desc || e.badges.length ? `
+        <div class="step-details">
+          ${editMode ? `
+            <textarea class="edit-field" onchange="updateDesc(${ei}, this.value)" onclick="event.stopPropagation()">${e.desc}</textarea>
+          ` : e.desc ? `<div class="detail-text">${e.desc.replace(/\n/g,'<br>')}</div>` : ''}
+          ${e.badges.map(b => `<div class="badge badge-${b.type}">${b.text}</div>`).join('')}
+        </div>` : ''}
+      </div>
+    `).join('')}
+    ${editMode ? `<button onclick="addEtape()" style="width:100%;padding:14px;background:white;border:2px dashed var(--border);border-radius:16px;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;">+ Ajouter une étape</button>` : ''}
+  `;
+}
+
+function renderPratique() {
+  document.getElementById('dayTabs').innerHTML = '';
+  document.getElementById('mainContent').innerHTML = `
+    <div class="day-label">Infos pratiques</div>
+    <div class="tips-grid">
+      ${data.pratique.map(t => `
+        <div class="tip-card">
+          <div class="tip-icon">${t.icon}</div>
+          <div class="tip-label">${t.label}</div>
+          <div class="tip-text">${t.text}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderNotes() {
+  document.getElementById('dayTabs').innerHTML = '';
+  document.getElementById('mainContent').innerHTML = `
+    <div class="day-label">Mes notes</div>
+    <div class="step" style="cursor:default">
+      <div style="padding:16px">
+        <textarea style="width:100%;min-height:300px;border:none;outline:none;font:inherit;font-size:14px;line-height:1.7;color:var(--text);resize:none;background:transparent;" 
+          placeholder="Écris tes notes ici..." 
+          oninput="data.notes=this.value;save()">${data.notes}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+// ─── INTERACTIONS ───
+function switchDay(id) {
+  currentDay = id;
+  renderJours();
+}
+
+function switchNav(nav, btn) {
+  currentNav = nav;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Show/hide edit button
+  document.getElementById('editBtn').style.display = nav === 'jours' ? '' : 'none';
+  render();
+}
+
+function toggleStep(i) {
+  const el = document.getElementById('step-' + i);
+  const details = el.querySelector('.step-details');
+  if (!details) return;
+  el.classList.toggle('open');
+}
+
+function toggleEdit() {
+  editMode = !editMode;
+  const btn = document.getElementById('editBtn');
+  btn.textContent = editMode ? '✓ Terminer' : '✏️ Modifier';
+  btn.classList.toggle('active', editMode);
+  renderJours();
+  if (!editMode) { save(); showToast(); }
+}
+
+function updateDesc(ei, val) {
+  const jour = data.jours.find(j => j.id === currentDay);
+  jour.etapes[ei].desc = val;
+}
+
+function addEtape() {
+  const jour = data.jours.find(j => j.id === currentDay);
+  jour.etapes.push({ time: "??h", title: "Nouvelle étape", transport: "", desc: "", badges: [] });
+  save();
+  renderJours();
+}
+
+function save() {
+  localStorage.setItem('maroc_data', JSON.stringify(data));
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ─── INIT ───
+document.getElementById('editBtn').style.display = '';
+render();
+</script>
+</body>
+</html>
